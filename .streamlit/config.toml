@@ -1,0 +1,31 @@
+[server]
+# Écoute sur toutes les interfaces réseau (pas seulement localhost), pour
+# que les autres appareils connectés au même réseau WiFi puissent accéder
+# à l'app via l'adresse IP locale de cette machine.
+address = "0.0.0.0"
+port = 8501
+# false = Streamlit ouvre automatiquement le navigateur au démarrage (comportement
+# habituel en local). Mettre à true uniquement pour un déploiement sur serveur
+# sans interface graphique.
+headless = false
+enableCORS = false
+enableXsrfProtection = false
+# Evite l'invite "Welcome to Streamlit! Email:" au tout premier lancement sur
+# une machine neuve (bloquante quand rien ne peut répondre au prompt, ex. ici
+# après réinstallation sur le PC de secours).
+showEmailPrompt = false
+
+[browser]
+# Empêche Streamlit de suggérer une adresse "externe" trompeuse basée sur
+# une IP publique détectée automatiquement.
+gatherUsageStats = false
+
+[theme]
+# Thème forcé en clair : toute l'app (des milliers de lignes de HTML custom
+# dans profiling.py, rapport_page.py, etc.) suppose un fond blanc et du texte
+# sombre codés en dur. Sans ça, quand l'utilisateur a un thème sombre au
+# niveau système/navigateur, Streamlit applique SON PROPRE thème sombre aux
+# éléments natifs (boutons, champs, graphiques Plotly) alors que tout le
+# HTML custom reste blanc -> mélange illisible. Forcer base="light" ici
+# rend l'app cohérente pour tout le monde, quel que soit le thème système.
+base = "light"

@@ -1,0 +1,15 @@
+# Environnement Python -- pas de code, rien à versionner (des Go)
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Secrets -- clé privée de compte de service Google Cloud (accès en
+# écriture aux Google Sheets). Ne DOIT jamais partir sur GitHub, même en
+# repo privé : à saisir plutôt dans l'onglet "Secrets" de Streamlit Cloud
+# au moment du déploiement (menu Settings de l'app déployée).
+.streamlit/secrets.toml
+.streamlit/secrets.toml.txt
+
+# Config locale de l'outil Claude Code (pas liée à l'appli elle-même)
+.claude/

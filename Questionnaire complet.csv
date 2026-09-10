@@ -1,0 +1,27 @@
+Date;Joueur;S1_Duree;S2_Qualite;S3_Endormissement;S4_Reveils;S5_Fatigue;Score Sommeil;Statut Sommeil;A1_Repas;A2_Glucides;A3_Proteines;A4_FruitsLegumes;A5_Hydratation;A6_PostEntrainement;Score Alimentation;Statut Alimentation
+24/02/2026;Joseph OKUMU;6h-7h59;Moyenne;20-40 min;0-1;Moyen;6;Moyen;2;Oui;Oui;3-4;Oui;Moyen;9;Moyen
+24/02/2026;Lenny SYLLA;> 8h;Très bonne;< 20 min;0-1;Pas fatigué;10;Bon;3+;Parfois;Oui;3-4;Oui;Non;8;Moyen
+24/02/2026;Tidiane DIARRASSOUBA;> 8h;Très bonne;< 20 min;0-1;Moyen;9;Bon;3+;Oui;Oui;3-4;Moyen;Non;8;Moyen
+24/02/2026;John PATRICK;> 8h;Très bonne;20-40 min;0-1;Pas fatigué;9;Bon;3+;Parfois;Oui;2-;Oui;Non;7;Moyen
+24/02/2026;Thiemoko DIARRA;6h-7h59;Très bonne;< 20 min;0-1;Très fatigué;7;Moyen;3+;Parfois;Oui;3-4;Oui;Non;8;Moyen
+24/02/2026;Mohamed DARAMY;6h-7h59;Moyenne;20-40 min;0-1;Moyen;6;Moyen;3+;Parfois;Oui;3-4;Oui;Non;8;Moyen
+24/02/2026;Patrick GUEU;6h-7h59;Moyenne;< 20 min;0-1;Moyen;7;Moyen;3+;Parfois;Oui;3-4;Oui;Oui;10;Bon
+24/02/2026;Elie NTAMON;> 8h;Très bonne;< 20 min;0-1;Pas fatigué;10;Bon;3+;Oui;Parfois;2-;Oui;Moyen;8;Moyen
+24/02/2026;Hiroki SEKINE;> 8h;Moyenne;< 20 min;0-1;Moyen;8;Bon;3+;Oui;Oui;3-4;Oui;Oui;11;Bon
+24/02/2026;Abdoul KONE;6h-7h59;Moyenne;< 20 min;0-1;Pas fatigué;8;Bon;3+;Oui;Oui;5+;Oui;Non;10;Bon
+24/02/2026;Hafiz IBRAHIM;> 8h;Très bonne;< 20 min;0-1;Moyen;9;Bon;2;Parfois;Oui;5+;Moyen;Moyen;8;Moyen
+24/02/2026;Samuel KOTTO;> 8h;Très bonne;20-40 min;0-1;Pas fatigué;9;Bon;3+;Parfois;Oui;2-;Oui;Oui;9;Moyen
+25/02/2026;Arone GADOU;6h-7h59;Très bonne;< 20 min;0-1;Moyen;8;Bon;2;Oui;Oui;3-4;Oui;Moyen;9;Moyen
+25/02/2026;Yassine BENHATTAB;> 8h;Très bonne;< 20 min;0-1;Moyen;9;Bon;2;Oui;Oui;3-4;Oui;Moyen;9;Moyen
+25/02/2026;Yaya FOFANA;6h-7h59;Moyenne;20-40 min;0-1;Très fatigué;5;Moyen;3+;Oui;Oui;2-;Oui;Non;8;Moyen
+25/02/2026;Sergio AKIEME;> 8h;Moyenne;< 20 min;0-1;Pas fatigué;9;Bon;3+;Oui;Oui;5+;Non;Oui;10;Bon
+25/02/2026;Martial TIA;> 8h;Très bonne;< 20 min;0-1;Moyen;9;Bon;3+;Oui;Oui;3-4;Moyen;Oui;10;Bon
+25/02/2026;Adama BOJANG;6h-7h59;Très bonne;< 20 min;0-1;Pas fatigué;9;Bon;3+;Oui;Oui;3-4;Oui;Moyen;10;Bon
+23/02/2026;Nicolas PALLOIS;6h-7h59;Moyenne;< 20 min;0-1;Pas fatigué;8;Bon;3+;Oui;Oui;5+;Oui;Non;10;Bon
+23/02/2026;Ewen JAOUEN;> 8h;Moyenne;20-40 min;0-1;Pas fatigué;8;Bon;3+;Oui;Oui;2-;Oui;Oui;10;Bon
+23/02/2026;Alexandre OLLIERO;6h-7h59;Très bonne;< 20 min;0-1;Pas fatigué;9;Bon;3+;Parfois;Parfois;5+;Oui;Moyen;9;Moyen
+23/02/2026;Keito NAKAMURA;> 8h;Moyenne;20-40 min;2-3;Moyen;6;Moyen;3+;Oui;Oui;3-4;Oui;Moyen;10;Bon
+23/02/2026;Maxime BUSI;6h-7h59;Moyenne;< 20 min;0-1;Pas fatigué;8;Bon;3+;Oui;Oui;3-4;Moyen;Oui;10;Bon
+23/02/2026;Mory GBANE;6h-7h59;Moyenne;20-40 min;0-1;Moyen;6;Moyen;3+;Oui;Oui;3-4;Oui;Moyen;10;Bon
+23/02/2026;Theo LEONI;> 8h;Très bonne;< 20 min;2-3;Pas fatigué;9;Bon;2;Oui;Oui;3-4;Oui;Oui;10;Bon
+23/02/2026;Soumaila SYLLA;6h-7h59;Moyenne;< 20 min;0-1;Moyen;7;Moyen;3+;Oui;Oui;3-4;Oui;Oui;11;Bon

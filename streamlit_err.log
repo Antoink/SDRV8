@@ -1,0 +1,12 @@
+
+(process:18136): GLib-GIO-WARNING **: 10:01:42.502: Unexpectedly, UWP app `Microsoft.OutlookForWindows_1.2025.1007.400_x64__8wekyb3d8bbwe' (AUMId `Microsoft.OutlookForWindows_8wekyb3d8bbwe!Microsoft.OutlookforWindows') supports 4 extensions but has no verbs
+
+(process:18136): GLib-GIO-WARNING **: 10:01:42.968: Unexpectedly, UWP app `PythonSoftwareFoundation.PythonManager_26.3.240.0_x64__qbz5n2kfra8p0' (AUMId `PythonSoftwareFoundation.PythonManager_qbz5n2kfra8p0!Python.Exe') supports 4 extensions but has no verbs
+
+(process:18136): GLib-GIO-WARNING **: 10:01:42.969: Unexpectedly, UWP app `PythonSoftwareFoundation.PythonManager_26.3.240.0_x64__qbz5n2kfra8p0' (AUMId `PythonSoftwareFoundation.PythonManager_qbz5n2kfra8p0!Pythonw.Exe') supports 2 extensions but has no verbs
+
+(process:18136): GLib-GIO-WARNING **: 10:01:43.083: Unexpectedly, UWP app `Clipchamp.Clipchamp_4.5.10920.0_x64__yxz26nhyzhsrt' (AUMId `Clipchamp.Clipchamp_yxz26nhyzhsrt!App') supports 41 extensions but has no verbs
+
+(process:18136): GLib-GIO-WARNING **: 10:01:43.358: Unexpectedly, UWP app `AdobeSystemsIncorporated.AdobePhotoshopExpress_6.7.5.0_x64__mtcwf2zmmt10c' (AUMId `AdobeSystemsIncorporated.AdobePhotoshopExpress_mtcwf2zmmt10c!App') supports 30 extensions but has no verbs
+
+(process:18136): GLib-GIO-WARNING **: 10:01:43.451: Unexpectedly, UWP app `Microsoft.ScreenSketch_11.2605.38.0_x64__8wekyb3d8bbwe' (AUMId `Microsoft.ScreenSketch_8wekyb3d8bbwe!App') supports 29 extensions but has no verbs

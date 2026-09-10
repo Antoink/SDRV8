@@ -1,0 +1,265 @@
+{
+    "AKIEME Sergio_Pré-saison": {
+        "entretien_date": "",
+        "rdv_date": "",
+        "dominant": "Force",
+        "weak": "Développement du RFD",
+        "strat_salle": "Se référer aux recommandations du Département Performance.",
+        "strat_terrain": "Se référer aux recommandations du Département Performance.",
+        "themes": [],
+        "selected_metrics": [
+            "RSI CMJ",
+            "Isak Triceps",
+            "Sit And Reach",
+            "Ratio Squeeze",
+            "Everseur (G)",
+            "Nordic Ischio (G)",
+            "Abducteurs (D)",
+            "SV1",
+            "Isak Cuisse",
+            "Isak Jambe",
+            "Endurance Heel Raise (G)",
+            "Endurance Heel Raise (D)",
+            "Test 1km (s)",
+            "Amax 1080",
+            "Abducteurs (G)",
+            "Knee To Wall (G)",
+            "SV2",
+            "Isak Biceps",
+            "Peak Force CMJ",
+            "Temps 15m (1080)",
+            "Inverseur (D)",
+            "Isak Sous-scapulaire",
+            "Wattbike (6s)",
+            "Somme ADD",
+            "CMJ 2JB",
+            "Isak Crête iliaque",
+            "Inverseur (G)",
+            "RFD CMJ",
+            "Nordic Ischio (D)",
+            "Adducteurs (G)",
+            "Everseur (D)",
+            "VMA",
+            "Adducteurs (D)",
+            "Isak Abdominal",
+            "Isak Supra-épineux",
+            "Knee To Wall (D)",
+            "Vitesse Max 15m (1080)",
+            "Temps 5m (1080)",
+            "Squat belt (N)"
+        ],
+        "use_relative": {
+            "Wattbike (6s)": false,
+            "Squat belt (N)": false,
+            "Peak Force CMJ": false
+        },
+        "staff_evals": {
+            "Wattbike (6s)": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Squat belt (N)": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "CMJ 2JB": {
+                "statut": "Non Acquis",
+                "objectif": "Cible: > 40 cm",
+                "delai": ""
+            },
+            "Peak Force CMJ": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "RFD CMJ": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "RSI CMJ": {
+                "statut": "Non Acquis",
+                "objectif": "Cible: > 2.5 ",
+                "delai": ""
+            },
+            "VMA": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "SV1": {
+                "statut": "Proche",
+                "objectif": "",
+                "delai": ""
+            },
+            "SV2": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Test 1km (s)": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Temps 15m (1080)": {
+                "statut": "Non Acquis",
+                "objectif": "Cible : < 2.6 (grp) s",
+                "delai": ""
+            },
+            "Temps 5m (1080)": {
+                "statut": "Non Acquis",
+                "objectif": "Cible : < 1.2 (grp) s",
+                "delai": ""
+            },
+            "Vitesse Max 15m (1080)": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Amax 1080": {
+                "statut": "Non Acquis",
+                "objectif": "Cible : > 7.8 (grp) m/s²",
+                "delai": ""
+            },
+            "Sit And Reach": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Knee To Wall (G)": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Knee To Wall (D)": {
+                "statut": "Non Acquis",
+                "objectif": "Cible: > 9 cm",
+                "delai": ""
+            },
+            "Adducteurs (G)": {
+                "statut": "Non Acquis",
+                "objectif": "Cible: > 26 Kg",
+                "delai": ""
+            },
+            "Adducteurs (D)": {
+                "statut": "Non Acquis",
+                "objectif": "Cible: > 26 Kg",
+                "delai": ""
+            },
+            "Somme ADD": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Abducteurs (G)": {
+                "statut": "Non Acquis",
+                "objectif": "Cible: > 26 Kg",
+                "delai": ""
+            },
+            "Abducteurs (D)": {
+                "statut": "Non Acquis",
+                "objectif": "Cible: > 26 Kg",
+                "delai": ""
+            },
+            "Ratio Squeeze": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Nordic Ischio (G)": {
+                "statut": "Non Acquis",
+                "objectif": "Cible: > 36 Kg",
+                "delai": ""
+            },
+            "Nordic Ischio (D)": {
+                "statut": "Non Acquis",
+                "objectif": "Cible: > 36 Kg",
+                "delai": ""
+            },
+            "Endurance Heel Raise (G)": {
+                "statut": "Non Acquis",
+                "objectif": "Cible: > 15 reps",
+                "delai": ""
+            },
+            "Endurance Heel Raise (D)": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Inverseur (G)": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Inverseur (D)": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Everseur (G)": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Everseur (D)": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Isak Triceps": {
+                "statut": "Non Acquis",
+                "objectif": "Cible : < 4.7 (grp) mm",
+                "delai": ""
+            },
+            "Isak Sous-scapulaire": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Isak Biceps": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Isak Crête iliaque": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Isak Supra-épineux": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Isak Abdominal": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Isak Cuisse": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            },
+            "Isak Jambe": {
+                "statut": "Acquis",
+                "objectif": "",
+                "delai": ""
+            }
+        },
+        "last_modified": "27/08/2026 12:19",
+        "history": [
+            {
+                "timestamp": "25/08/2026 15:59",
+                "dominant": "",
+                "weak": "",
+                "strat_salle": "",
+                "strat_terrain": "",
+                "themes": []
+            }
+        ]
+    }
+}

@@ -1,0 +1,6 @@
+# Dépendances de développement uniquement (tests) — pas nécessaires pour
+# faire tourner l'app en prod, donc séparées de requirements.txt.
+#
+# Installation : pip install -r requirements-dev.txt
+# Lancer les tests : pytest
+pytest
