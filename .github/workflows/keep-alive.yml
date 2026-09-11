@@ -1,0 +1,27 @@
+# =============================================================================
+# keep-alive.yml — Empêche l'appli de "s'endormir" sur Streamlit Cloud
+# =============================================================================
+# Streamlit Community Cloud (offre gratuite) met en veille une appli après
+# une période sans aucun visiteur -- le visiteur suivant tombe alors sur un
+# écran "This app has gone to sleep" et doit cliquer pour la reveiller
+# (environ 1 minute d'attente). Demande (09/2026) : que l'appli ne se
+# "déconnecte" jamais.
+#
+# Ce workflow visite l'appli toutes les 6 heures (4x/jour), ce qui suffit à
+# la maintenir active en permanence -- gratuit, ne dépend d'aucun service
+# tiers, tourne directement sur GitHub.
+# =============================================================================
+name: Keep Streamlit app awake
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping l'appli pour la garder active
+        run: |
+          curl -s -o /dev/null -w "%{http_code}\n" "https://profilagev8.streamlit.app" || true
