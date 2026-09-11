@@ -85,7 +85,19 @@ def _photo_b64_centered_square(photo_path, size=160):
             w, h = img.size
             side = min(w, h)
             left = (w - side) // 2
-            top = (h - side) // 2
+            # BUG CORRIGÉ (09/2026, 2e passe) : un centrage géométrique PUR
+            # (50% en haut, 50% en bas) recadre trop bas sur les photos
+            # portrait -- la tête n'est jamais au milieu vertical d'un
+            # portrait buste (le maillot/torse occupe la moitié basse), donc
+            # le rond du PDF cadrait le cou/torse au lieu du visage. On
+            # ancre le recadré vers le HAUT de l'image plutôt que le centre
+            # pour les photos portrait (plus hautes que larges -- le cas de
+            # quasiment toutes les photos joueur) ; les photos déjà carrées
+            # ou plus larges que hautes gardent un centrage classique.
+            if h > w:
+                top = int((h - side) * 0.18)
+            else:
+                top = (h - side) // 2
             img = img.crop((left, top, left + side, top + side)).resize((size, size), Image.LANCZOS)
             buf = io.BytesIO()
             img.save(buf, format="PNG")
