@@ -61,6 +61,39 @@ def _classement_logo_b64(filename):
         return ""
 
 
+@st.cache_data(show_spinner=False)
+def _photo_b64_centered_square(photo_path, size=160):
+    """
+    Version carrée, RECADRÉE AU CENTRE, d'une photo joueur, encodée en
+    base64 -- pour le PDF du classement (podium).
+
+    BUG CORRIGÉ (09/2026) : la version précédente affichait la photo brute
+    (souvent rectangulaire, portrait) dans un cadre CSS carré via
+    `object-fit: cover`, une propriété que WeasyPrint ne gère pas de façon
+    fiable une fois combinée à `border-radius` -- résultat : photo étirée
+    ou décentrée dans le PDF (visage pas au centre du rond), alors que le
+    même CSS s'affiche correctement dans un vrai navigateur. On recadre
+    donc l'image nous-mêmes avec Pillow AVANT de l'envoyer à WeasyPrint :
+    un carré déjà centré/rogné n'a plus besoin d'object-fit pour bien
+    s'afficher, quel que soit le moteur de rendu.
+    """
+    try:
+        from PIL import Image
+        import io
+        with Image.open(photo_path) as img:
+            img = img.convert("RGB")
+            w, h = img.size
+            side = min(w, h)
+            left = (w - side) // 2
+            top = (h - side) // 2
+            img = img.crop((left, top, left + side, top + side)).resize((size, size), Image.LANCZOS)
+            buf = io.BytesIO()
+            img.save(buf, format="PNG")
+            return base64.b64encode(buf.getvalue()).decode()
+    except Exception:
+        return ""
+
+
 def build_classement_pdf_html(df_clean, choix_kpi, sel_session, unit, choix_equipes, joueurs_blesses=None):
     joueurs_blesses = joueurs_blesses or set()
     logo_sdr = _classement_logo_b64("logo_sdr.png")
@@ -70,26 +103,26 @@ def build_classement_pdf_html(df_clean, choix_kpi, sel_session, unit, choix_equi
     podium = df_clean.head(nb_podium)
     reste = df_clean.iloc[nb_podium:]
 
-    RANK_STYLE = {
-        1: ("#D4AF37", "🥇"),
-        2: ("#A6A6A6", "🥈"),
-        3: ("#B08D57", "🥉"),
-    }
+    # Couleur d'accent par rang (or/argent/bronze), SANS emoji médaille --
+    # les emoji ne s'affichent pas correctement dans le PDF (WeasyPrint,
+    # sur l'environnement de déploiement, n'a pas de police emoji ->
+    # caractères vides/bizarres à la place). La couleur + le rang suffisent.
+    RANK_COLOR = {1: "#D4AF37", 2: "#A6A6A6", 3: "#B08D57"}
 
     podium_cards = ""
     for _, r in podium.iterrows():
         rang = int(r["Rang"])
-        accent, medal = RANK_STYLE.get(rang, (SDR_RED, ""))
+        accent = RANK_COLOR.get(rang, SDR_RED)
         photo_path = get_best_photo_path(r["Joueur"])
-        photo_b64 = img_to_b64(photo_path) if photo_path else ""
+        photo_b64 = _photo_b64_centered_square(photo_path) if photo_path else ""
         photo_html = (
-            f'<img src="data:image/png;base64,{photo_b64}" style="width:70px; height:70px; object-fit:cover; border-radius:50%; border:3px solid {accent};" />'
+            f'<img src="data:image/png;base64,{photo_b64}" style="display:block; width:70px; height:70px; border-radius:50%; border:3px solid {accent};" />'
             if photo_b64 else
             f'<div style="width:70px; height:70px; border-radius:50%; border:3px solid {accent}; background:#f0f0f0; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:900; color:{accent};">{rang}</div>'
         )
         podium_cards += f"""
         <div style="display:flex; align-items:center; gap:18px; background:#fff; border:1px solid #eee; border-left:6px solid {accent}; border-radius:8px; padding:14px 20px; margin-bottom:12px; box-shadow:0 2px 6px rgba(0,0,0,0.06);">
-            <div style="font-size:22px; font-weight:900; color:{accent}; width:34px; text-align:center;">{medal or f"#{rang}"}</div>
+            <div style="font-size:20px; font-weight:900; color:{accent}; width:34px; text-align:center;">#{rang}</div>
             {photo_html}
             <div style="flex:1;">
                 <div style="font-size:17px; font-weight:800; color:{SDR_BLACK};">{r['Joueur']}</div>
@@ -99,8 +132,9 @@ def build_classement_pdf_html(df_clean, choix_kpi, sel_session, unit, choix_equi
         </div>
         """
 
+    blesse_badge_html = ' <span style="color:#D71920; font-size:9px; font-weight:800; text-transform:uppercase; border:1px solid #D71920; border-radius:3px; padding:1px 4px;">Blessure</span>'
     table_rows = "".join(
-        f"<tr><td>{int(r['Rang'])}</td><td>{r['Joueur']}{' 🏥' if str(r['Joueur']).strip().lower() in joueurs_blesses else ''}</td><td>{r['Equipe']}</td><td>{r['Valeur_Display']}</td></tr>"
+        f"<tr><td>{int(r['Rang'])}</td><td>{r['Joueur']}{blesse_badge_html if str(r['Joueur']).strip().lower() in joueurs_blesses else ''}</td><td>{r['Equipe']}</td><td>{r['Valeur_Display']}</td></tr>"
         for _, r in df_clean.iterrows()
     )
 
@@ -141,7 +175,7 @@ def build_classement_pdf_html(df_clean, choix_kpi, sel_session, unit, choix_equi
             Équipes incluses : <b>{equipes_txt}</b> &nbsp;|&nbsp; Généré le <b>{date_gen}</b>
         </div>
 
-        <h2 class="section">🏆 Top {nb_podium}</h2>
+        <h2 class="section">Top {nb_podium}</h2>
         {podium_cards}
 
         <div class="page-break"></div>
