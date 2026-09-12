@@ -7,6 +7,16 @@
 # (environ 1 minute d'attente). Demande (09/2026) : que l'appli ne se
 # "déconnecte" jamais.
 #
+# BUG CORRIGÉ (09/2026) : la 1ère version faisait un simple `curl` sur
+# l'URL -- ça ne fait que récupérer la page HTML, sans jamais exécuter le
+# JavaScript ni ouvrir la connexion WebSocket que Streamlit utilise pour la
+# vraie session applicative. Streamlit Cloud ne comptait donc PAS ce ping
+# comme une visite réelle, et l'appli s'endormait quand même malgré un
+# robot qui tournait bien (confirmé : exécutions "success" régulières,
+# mais sans effet). On utilise maintenant un vrai navigateur headless
+# (Playwright) qui charge la page en entier et laisse le temps à l'appli
+# de se connecter -- une visite indiscernable d'un vrai utilisateur.
+#
 # Ce workflow visite l'appli toutes les 6 heures (4x/jour), ce qui suffit à
 # la maintenir active en permanence -- gratuit, ne dépend d'aucun service
 # tiers, tourne directement sur GitHub.
@@ -22,6 +32,43 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping l'appli pour la garder active
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installer Playwright + Chromium
         run: |
-          curl -s -o /dev/null -w "%{http_code}\n" "https://profilagev8.streamlit.app" || true
+          pip install playwright
+          playwright install --with-deps chromium
+
+      - name: Visiter l'appli avec un vrai navigateur (réveille + maintient active)
+        run: |
+          python - <<'EOF'
+          from playwright.sync_api import sync_playwright
+          import sys
+
+          URL = "https://profilagev8.streamlit.app"
+
+          with sync_playwright() as p:
+              browser = p.chromium.launch()
+              page = browser.new_page(viewport={"width": 1280, "height": 800})
+              page.goto(URL, wait_until="networkidle", timeout=90000)
+
+              # Si l'appli était endormie, un bouton "Yes, get this app
+              # back up!" apparait -- on clique dessus pour la relancer.
+              try:
+                  btn = page.get_by_text("get this app back up", exact=False)
+                  if btn.count() > 0:
+                      btn.first.click()
+                      print("App was asleep -- clicked wake button.")
+                      page.wait_for_timeout(30000)
+              except Exception as e:
+                  print("No wake button (app already awake) or click failed:", e)
+
+              # Laisse la session vivre quelques secondes pour que Streamlit
+              # Cloud enregistre une vraie activité (connexion WebSocket).
+              page.wait_for_timeout(8000)
+              print("Title:", page.title())
+              browser.close()
+          EOF
