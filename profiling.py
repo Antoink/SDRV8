@@ -38,6 +38,12 @@ from classement import show_classement_page
 from glossary import annotate_glossary_terms
 import glob
 
+# Bascule d'affichage du bloc "Poste(s) jouable(s)" / terrain (profilage
+# technico-tactique) sur le Profil Individuel -- retiré temporairement de
+# l'affichage (demande 09/2026), à remettre à True quand le département est
+# prêt à le montrer à nouveau. Le code du bloc reste intact plus bas.
+SHOW_TECHNICO_TACTIQUE = False
+
 
 
 # Mapping pour faire correspondre les Libellés UI -> Colonnes Excel
@@ -1329,7 +1335,7 @@ def inject_custom_css():
 def show_profiling_page(df_main=None):
     inject_custom_css()
     
-    st.markdown("""<div style='position:absolute; top:-50px; left:0; font-size:10px; color:#666; font-weight:bold;'>Antoine Kaczmarek - DEPARTEMENT PERFORMANCE - STADE DE REIMS</div>""", unsafe_allow_html=True)
+    st.markdown("""<div style='position:absolute; top:-50px; left:0; font-size:10px; color:#666; font-weight:bold;'>DEPARTEMENT PERFORMANCE - STADE DE REIMS</div>""", unsafe_allow_html=True)
 
     import base64
 
@@ -1559,12 +1565,16 @@ def show_profiling_page(df_main=None):
         # juste au-dessus dans val_poste) ; poste(s) secondaire(s) =
         # "PositionSecondaire" (même format). "G"/"D"/"C" en fin de code =
         # Gauche/Droite/Centre (cf. pitch_profiling.py).
-        st.markdown(f"<h4 style='color:{SDR_RED}; margin-top:10px;'>⚽ Poste(s) jouable(s)</h4>", unsafe_allow_html=True)
-        st.warning("🚧 **Profilage technico-tactique en construction** — le terrain ci-dessous affiche déjà le poste principal et le(s) poste(s) secondaire(s). Les données technico-tactiques détaillées viendront s'y ajouter progressivement.")
-        with st.container():
-            _raw_sec = _static_attr("PositionSecondaire", prefer_specific=True) or _static_attr("Postes Secondaires")
-            _postes_sec = [p.strip() for p in str(_raw_sec).split(",") if p.strip()] if _raw_sec else []
-            st.markdown(render_position_pitch(val_poste, _postes_sec, val_lat), unsafe_allow_html=True)
+        # Retiré temporairement de l'affichage (demande 09/2026) -- le code
+        # est intact, juste caché derrière SHOW_TECHNICO_TACTIQUE (tout en
+        # haut du fichier) pour pouvoir le remettre en un instant.
+        if SHOW_TECHNICO_TACTIQUE:
+            st.markdown(f"<h4 style='color:{SDR_RED}; margin-top:10px;'>⚽ Poste(s) jouable(s)</h4>", unsafe_allow_html=True)
+            st.warning("🚧 **Profilage technico-tactique en construction** — le terrain ci-dessous affiche déjà le poste principal et le(s) poste(s) secondaire(s). Les données technico-tactiques détaillées viendront s'y ajouter progressivement.")
+            with st.container():
+                _raw_sec = _static_attr("PositionSecondaire", prefer_specific=True) or _static_attr("Postes Secondaires")
+                _postes_sec = [p.strip() for p in str(_raw_sec).split(",") if p.strip()] if _raw_sec else []
+                st.markdown(render_position_pitch(val_poste, _postes_sec, val_lat), unsafe_allow_html=True)
 
         # --- RÉSUMÉ EN UN COUP D'ŒIL ---
         # Carte de synthèse compacte, dans le même esprit "rapide en haut,
@@ -3243,3 +3253,15 @@ def show_profiling_page(df_main=None):
                 from export_page import show_export_page
                 show_export_page(df_toutes_equipes)
             _render_tab_export()
+
+    # Attribution discrète en bas de page (demande 09/2026 : ne plus
+    # afficher le nom en haut de l'appli, seulement "Département
+    # Performance" -- le nom de l'auteur reste visible mais très discret,
+    # en bas de toute la page.
+    st.markdown(
+        "<div style='text-align:center; margin-top:40px; padding-top:12px; "
+        "border-top:1px solid #eee; font-size:10px; color:#bbb;'>"
+        "développé par Antoine Kaczmarek"
+        "</div>",
+        unsafe_allow_html=True,
+    )

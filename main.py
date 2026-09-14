@@ -34,7 +34,10 @@ def check_password():
         
         st.markdown("""
             <div style='text-align:center; margin-top:20px; font-size:11px; color:#666; font-weight:bold; letter-spacing:0.5px; border-top:1px solid #eee; padding-top:15px;'>
-                Antoine Kaczmarek - DEPARTEMENT PERFORMANCE - STADE DE REIMS
+                DEPARTEMENT PERFORMANCE - STADE DE REIMS
+            </div>
+            <div style='text-align:center; margin-top:6px; font-size:9px; color:#bbb;'>
+                développé par Antoine Kaczmarek
             </div>
         """, unsafe_allow_html=True)
         
