@@ -45,11 +45,12 @@ def check_password():
             else:
                 st.error("❌ Mot de passe incorrect")
 
-    # Attribution discrète, ancrée en bas à droite de l'ÉCRAN (position
+    # Attribution discrète, ancrée en bas à GAUCHE de l'ÉCRAN (position
     # fixed, pas dans la colonne centrale étroite du formulaire) -- demande
-    # 09/2026 : ni en haut, ni au centre, juste visible dans le coin.
+    # 09/2026 : en bas à droite, le widget "Manage app" de Streamlit Cloud
+    # passe par-dessus et le cache -- déplacé à gauche pour rester visible.
     st.markdown(
-        "<div style='position:fixed; bottom:10px; right:16px; font-size:9px; "
+        "<div style='position:fixed; bottom:10px; left:16px; font-size:9px; "
         "color:#bbb; z-index:9999;'>développé par Antoine Kaczmarek</div>",
         unsafe_allow_html=True,
     )

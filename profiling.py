@@ -3254,11 +3254,11 @@ def show_profiling_page(df_main=None):
                 show_export_page(df_toutes_equipes)
             _render_tab_export()
 
-    # Attribution discrète, ancrée en bas à droite de l'ÉCRAN (position
-    # fixed) -- demande 09/2026 : ni en haut, ni au centre, juste visible
-    # dans le coin, quel que soit le scroll de la page.
+    # Attribution discrète, ancrée en bas à GAUCHE de l'ÉCRAN (position
+    # fixed) -- demande 09/2026 : en bas à droite, le widget "Manage app"
+    # de Streamlit Cloud passe par-dessus et le cache -- déplacé à gauche.
     st.markdown(
-        "<div style='position:fixed; bottom:10px; right:16px; font-size:9px; "
+        "<div style='position:fixed; bottom:10px; left:16px; font-size:9px; "
         "color:#bbb; z-index:9999;'>développé par Antoine Kaczmarek</div>",
         unsafe_allow_html=True,
     )
