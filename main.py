@@ -36,18 +36,24 @@ def check_password():
             <div style='text-align:center; margin-top:20px; font-size:11px; color:#666; font-weight:bold; letter-spacing:0.5px; border-top:1px solid #eee; padding-top:15px;'>
                 DEPARTEMENT PERFORMANCE - STADE DE REIMS
             </div>
-            <div style='text-align:center; margin-top:6px; font-size:9px; color:#bbb;'>
-                développé par Antoine Kaczmarek
-            </div>
         """, unsafe_allow_html=True)
-        
+
         if pwd:
             if pwd == "SDR":
                 st.session_state["password_correct"] = True
                 st.rerun()
             else:
                 st.error("❌ Mot de passe incorrect")
-                
+
+    # Attribution discrète, ancrée en bas à droite de l'ÉCRAN (position
+    # fixed, pas dans la colonne centrale étroite du formulaire) -- demande
+    # 09/2026 : ni en haut, ni au centre, juste visible dans le coin.
+    st.markdown(
+        "<div style='position:fixed; bottom:10px; right:16px; font-size:9px; "
+        "color:#bbb; z-index:9999;'>développé par Antoine Kaczmarek</div>",
+        unsafe_allow_html=True,
+    )
+
     return False
 
 

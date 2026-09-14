@@ -3254,14 +3254,11 @@ def show_profiling_page(df_main=None):
                 show_export_page(df_toutes_equipes)
             _render_tab_export()
 
-    # Attribution discrète en bas de page (demande 09/2026 : ne plus
-    # afficher le nom en haut de l'appli, seulement "Département
-    # Performance" -- le nom de l'auteur reste visible mais très discret,
-    # en bas de toute la page.
+    # Attribution discrète, ancrée en bas à droite de l'ÉCRAN (position
+    # fixed) -- demande 09/2026 : ni en haut, ni au centre, juste visible
+    # dans le coin, quel que soit le scroll de la page.
     st.markdown(
-        "<div style='text-align:center; margin-top:40px; padding-top:12px; "
-        "border-top:1px solid #eee; font-size:10px; color:#bbb;'>"
-        "développé par Antoine Kaczmarek"
-        "</div>",
+        "<div style='position:fixed; bottom:10px; right:16px; font-size:9px; "
+        "color:#bbb; z-index:9999;'>développé par Antoine Kaczmarek</div>",
         unsafe_allow_html=True,
     )
