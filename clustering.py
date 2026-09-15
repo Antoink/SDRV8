@@ -11,9 +11,6 @@ import plotly.graph_objects as go
 # en a besoin (_suggest_best_k, _cluster_stability, show_clustering_page) --
 # le coût ne survient qu'à la première ouverture réelle de cet onglet, et
 # les imports suivants sont instantanés (module déjà en cache Python).
-from scipy import stats as scipy_stats
-from scipy.spatial import ConvexHull, QhullError
-
 from charts import build_radar, SDR_BLUE
 from comparateur import calculate_percentile
 
@@ -180,6 +177,7 @@ def _anova_pvalue(df_analyse, var, cluster_col='Cluster'):
     if len(groups) < 2 or any(len(g) < 2 for g in groups):
         return None
     try:
+        from scipy import stats as scipy_stats
         _, p = scipy_stats.kruskal(*groups)
         return p
     except Exception:
@@ -722,6 +720,7 @@ et al. (2025) sur leur propre clustering de joueurs de football.
 
                     if len(df_c) >= 3:
                         try:
+                            from scipy.spatial import ConvexHull, QhullError
                             pts = df_c[['PCA_X', 'PCA_Y']].values
                             hull = ConvexHull(pts)
                             hull_pts = np.append(pts[hull.vertices], [pts[hull.vertices][0]], axis=0)

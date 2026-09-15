@@ -52,14 +52,20 @@ from stats_engine import (
     calculate_percentile, calculate_zscore, get_value_for_metric, auto_eval_metric,
     get_kine_radar_pct, compute_group_zscores,
 )
-from rapport_charts import create_radar_chart, create_radar_chart_kine
 from html_components import get_metric_card_html, get_theme_card_html, get_trend_html
 from suggestions import get_theme_suggestions_advanced, get_kpi_auto_fill, auto_forces_faiblesses
-from report_prepa import build_prepa_report, MARQUEUR_RECO
-from report_kine import build_kine_report, MARQUEUR_DETAIL_START, MARQUEUR_DETAIL_END
+# report_prepa / report_kine / rapport_charts : PAS importés ici au niveau
+# module, volontairement. Ces 3 modules importent matplotlib.pyplot (~0.5s
+# a eux seuls), payes a CHAQUE lancement de l'appli puisque rapport_page.py
+# est charge sans condition par profiling.py -- meme si l'utilisateur ne va
+# jamais sur l'onglet RAPPORT. Importes localement plus bas, uniquement
+# quand un rapport est reellement genere (voir _generate_quick_report et le
+# bouton "Generer le rapport").
 from persistence import load_profiling_data_raw, save_profiling_data, PLANNING_FILE_PATH
 from pdf_export import is_pdf_export_available, html_to_pdf_bytes
-from batch_engine import BatchConfig, build_batch_zip
+# batch_engine : idem rapport_charts/report_prepa/report_kine -- importe
+# aussi matplotlib en cascade, importe localement juste avant le bouton de
+# generation en lot (voir plus bas).
 from planning import build_kpi_department_plan_html, build_kpi_focus_plan_html
 from data_loader import is_inverted
 from stats_engine import get_ref_dataframe, resolve_ref_group  # noqa: E402 (import positionné ici volontairement, après calcul de col_age/min_age_file/max_age_file)
@@ -350,6 +356,9 @@ def _generate_quick_report(p_sel, row, df, df_session, df_ref, ref_group_label, 
         rdv_date=saved_data_player.get("rdv_date", ""), entretien_date=saved_data_player.get("entretien_date", ""),
         context_test="Pré-saison", ref_group_label=ref_group_label, comp_zscores=comp_zscores,
     )
+
+    from report_prepa import build_prepa_report, MARQUEUR_RECO
+    from report_kine import build_kine_report, MARQUEUR_DETAIL_START, MARQUEUR_DETAIL_END
 
     if report_mode == "Préparation Physique":
         return build_prepa_report(p_sel, radar_labels=radar_labels_prepa, radar_values=radar_values_prepa,
@@ -1099,6 +1108,9 @@ def show_rapport_page(df):
             ref_group_label=ref_group_label, comp_zscores=comp_zscores,
         )
 
+        from report_prepa import build_prepa_report, MARQUEUR_RECO
+        from report_kine import build_kine_report, MARQUEUR_DETAIL_START, MARQUEUR_DETAIL_END
+
         if report_mode == "Préparation Physique":
             html_report = build_prepa_report(p_sel, radar_labels=radar_labels_prepa, radar_values=radar_values_prepa,
                                               groupes_prepa=GROUPES_PREPA, **common_args)
@@ -1256,6 +1268,7 @@ def show_rapport_page(df):
             st.caption("PDF indisponible dans cet environnement → le lot sera généré en HTML.")
 
         if st.button("🚀 Lancer la génération en lot", type="primary", disabled=not batch_players):
+            from batch_engine import BatchConfig, build_batch_zip
             cfg = BatchConfig(
                 report_mode=report_mode,
                 selected_metrics=selected_metrics,
