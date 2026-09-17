@@ -142,7 +142,26 @@ if check_password():
         # été tapé plus vite que le temps du fetch réseau.
         full_data, source = st.session_state["data_future"].result()
 
-    st.toast(f"✅ Données chargées : {source}")
+    # Alerte de fiabilité : si Google Sheets/PostgreSQL est injoignable, on ne
+    # veut surtout pas laisser le staff consulter des pages vides ou
+    # périmées sans le savoir -- contrairement au st.toast (discret, 4s puis
+    # disparaît), ces bandeaux restent affichés en haut de page tant que la
+    # source n'est pas fiable.
+    if full_data.empty:
+        st.error(
+            "🚨 Aucune donnée chargée : Google Sheets est injoignable et aucun fichier "
+            "de secours n'a été trouvé. Les pages ci-dessous seront vides tant que la "
+            "source de données n'est pas rétablie.",
+            icon="🚨",
+        )
+    elif source != "Google Sheets":
+        st.warning(
+            f"⚠️ Google Sheets injoignable : source de secours utilisée ({source}), "
+            "les données affichées peuvent ne pas être à jour.",
+            icon="⚠️",
+        )
+    else:
+        st.toast(f"✅ Données chargées : {source}")
 
     profiling.show_profiling_page(full_data)
 
