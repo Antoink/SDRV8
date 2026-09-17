@@ -3,13 +3,27 @@ from utils import load_data, load_data_postgres, local_css, SDR_RED
 from glossary import render_glossary_expander
 import profiling
 import os
+import concurrent.futures
 
 st.set_page_config(
     page_title="SDR Performance",
     layout="wide",
-    initial_sidebar_state="collapsed", 
+    initial_sidebar_state="collapsed",
     page_icon="logo_sdr.png"
 )
+
+# PRÉ-CHARGEMENT DES DONNÉES DÈS L'OUVERTURE DE L'APPLI
+# -------------------------------------------------------
+# Avant, load_data() (fetch réseau du Google Sheets) n'était appelé qu'une
+# fois le mot de passe validé -- la personne attendait donc le temps de ce
+# fetch APRÈS avoir tapé son mot de passe. Ici on lance ce fetch dans un
+# thread en arrière-plan dès le tout premier run du script (donc pendant que
+# l'écran de mot de passe s'affiche et que la personne le saisit) : le
+# temps de frappe du mot de passe "masque" le temps réseau. .result() plus
+# bas ne bloque que si le thread n'a pas encore fini.
+if "data_future" not in st.session_state:
+    st.session_state["data_executor"] = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+    st.session_state["data_future"] = st.session_state["data_executor"].submit(load_data)
 
 # MOT DE PASSE
 def check_password():
@@ -123,7 +137,10 @@ if check_password():
             st.sidebar.warning(f"PostgreSQL indisponible ({source}) → retour à Google Sheets.")
             full_data, source = load_data()
     else:
-        full_data, source = load_data()
+        # Récupère le résultat du fetch lancé en arrière-plan dès l'ouverture
+        # de l'appli (voir plus haut) -- ne bloque que si le mot de passe a
+        # été tapé plus vite que le temps du fetch réseau.
+        full_data, source = st.session_state["data_future"].result()
 
     st.toast(f"✅ Données chargées : {source}")
 
