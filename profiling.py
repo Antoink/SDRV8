@@ -1407,7 +1407,10 @@ def show_profiling_page(df_main=None):
 
     # 1. Filtre Global : On ne filtre QUE l'équipe ici
     if "Equipe" in df.columns:
-        equipes = sorted(df["Equipe"].dropna().astype(str).unique())
+        # Seules PRO/ESPOIR/ELITE sont des categories reelles du club --
+        # "REVELATION" (et toute autre valeur parasite venant d'un fichier
+        # source) est filtree du selecteur (demande 09/2026).
+        equipes = [e for e in sorted(df["Equipe"].dropna().astype(str).unique()) if e in ("PRO", "ESPOIR", "ELITE")]
 
         # On cherche l'index de "PRO", sinon on prend 0 par défaut
         default_index = equipes.index("PRO") if "PRO" in equipes else 0
@@ -1740,12 +1743,57 @@ def show_profiling_page(df_main=None):
             radar_values.append(final_score)
             
             table_rows_data.append({
-                "label": item['label'], 
-                "actual_col": actual_col_key, 
+                "label": item['label'],
+                "actual_col": actual_col_key,
                 "value_display": val_str,
                 "norm_display": norm_str,
                 "score": int(final_score)
             })
+
+        # 2bis. Superposition "standard PRO" (même poste large) -- demande
+        # 09/2026 : pouvoir situer un joueur ESPOIR/ELITE par rapport au
+        # niveau PRO du même poste directement sur SON radar GPS, sans
+        # passer par l'onglet Analyse Collective. Même principe que le
+        # radar par poste (team_profiling._render_radar_postes) : les
+        # joueurs PRO du même poste large sont replacés sur l'échelle de
+        # percentile du groupe actuellement affiché, puis moyennés axe par
+        # axe. Non affiché pour un joueur déjà PRO (comparaison à lui-même).
+        show_pro_overlay_indiv = False
+        df_pro_indiv = pd.DataFrame()
+        if sel_equipe != "PRO" and poste_groupe_norme and "Equipe" in df_toutes_equipes.columns:
+            col_pos_pro = find_column_in_df(df_toutes_equipes, "Position") or find_column_in_df(df_toutes_equipes, "Poste")
+            if col_pos_pro:
+                df_pro_indiv = df_toutes_equipes[df_toutes_equipes["Equipe"].astype(str) == "PRO"].copy()
+                df_pro_indiv["Poste_Groupe"] = df_pro_indiv[col_pos_pro].apply(get_poste_large)
+                df_pro_indiv = df_pro_indiv[df_pro_indiv["Poste_Groupe"] == poste_groupe_norme]
+
+        if not df_pro_indiv.empty:
+            show_pro_overlay_indiv = st.checkbox(
+                f"⭐ Superposer le standard PRO ({poste_groupe_norme.title()})",
+                value=False,
+                key=f"radar_indiv_pro_overlay_{p_sel}",
+                help="Ajoute une ligne pointillée montrant la moyenne des PRO du même "
+                     "poste, sur l'échelle de percentile du groupe actuellement affiché.",
+            )
+
+        radar_values_pro = []
+        if show_pro_overlay_indiv:
+            for item in radar_config:
+                pro_pcts = []
+                for col_key in item['cols']:
+                    col_name = COL_MAPPING.get(col_key, col_key)
+                    if col_name not in df_pro_indiv.columns:
+                        continue
+                    for raw_val in df_pro_indiv[col_name]:
+                        v = clean_numeric_value(raw_val)
+                        if v is None:
+                            continue
+                        try:
+                            _, pp = calculate_percentile(df, col_name, v)
+                            pro_pcts.append(pp)
+                        except Exception:
+                            pass
+                radar_values_pro.append(round(sum(pro_pcts) / len(pro_pcts)) if pro_pcts else 0)
 
         # 3. Affichage
         c_radar, c_table = st.columns([3, 2])
@@ -1792,16 +1840,26 @@ def show_profiling_page(df_main=None):
                 radar_hover_texts.append(hover_html)
                 
             if radar_labels:
+                radar_series_indiv = [{
+                    "name": "Profil",
+                    "values": radar_values,
+                    "color": "#423D3D",
+                    "fill_opacity": 0.4,
+                    "width": 2,
+                    "hovertext": radar_hover_texts,
+                }]
+                if show_pro_overlay_indiv and radar_values_pro:
+                    radar_series_indiv.append({
+                        "name": f"PRO — {poste_groupe_norme.title()}",
+                        "values": radar_values_pro,
+                        "color": SDR_RED,
+                        "width": 2,
+                        "dash": True,
+                        "fill": False,
+                    })
                 fig_main_radar = build_radar(
                     radar_labels,
-                    [{
-                        "name": "Profil",
-                        "values": radar_values,
-                        "color": "#423D3D",
-                        "fill_opacity": 0.4,
-                        "width": 2,
-                        "hovertext": radar_hover_texts,
-                    }],
+                    radar_series_indiv,
                     zones=[
                         (33, 'rgba(215, 25, 32, 0.15)'),   # Zone 0-33 (Rouge - Flop)
                         (66, None),                         # Limite 33-66 (Moyen - fond transparent)
@@ -3156,6 +3214,96 @@ def show_profiling_page(df_main=None):
                     source = get_source(var)
                     data_norms.append({"Catégorie": cat, "Indicateur": clean_name, "Objectif": norm_val, "Source": source})
             st.dataframe(pd.DataFrame(data_norms), width='stretch', hide_index=True)
+
+        # --- RADAR PERSONNALISÉ vs STANDARD PRO (par poste) ---
+        # Demande 09/2026 : en bas de la fiche joueur, pouvoir choisir
+        # librement les indicateurs à comparer et situer le joueur par
+        # rapport à la moyenne PRO du même poste large (Défenseur / Milieu /
+        # Attaquant / Gardien) -- même logique de calcul que la superposition
+        # PRO du radar GPS plus haut, généralisée à n'importe quel indicateur.
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown(f"<h4 style='color:{SDR_RED};'>Radar personnalisé vs standard PRO</h4>", unsafe_allow_html=True)
+        st.caption("Choisis librement les indicateurs à comparer. La ligne pointillée montre la moyenne des joueurs PRO au même poste (Défenseur / Milieu / Attaquant / Gardien).")
+
+        _labels_custom_all = []
+        _seen_labels_custom = set()
+        for _cat_c, _vars_c in OFFICIAL_STRUCTURE.items():
+            for _var_c in _vars_c:
+                _lbl_c = get_clean_label(_var_c)
+                if _lbl_c not in _seen_labels_custom:
+                    _seen_labels_custom.add(_lbl_c)
+                    _labels_custom_all.append(_lbl_c)
+
+        sel_indics_custom = st.multiselect(
+            "Indicateurs du radar :",
+            _labels_custom_all,
+            default=_labels_custom_all[:6],
+            key=f"radar_custom_indics_{p_sel}",
+        )
+
+        if len(sel_indics_custom) < 3:
+            st.info("Sélectionne au moins 3 indicateurs pour afficher le radar.")
+        else:
+            _axes_c, _vals_c, _cols_c = [], [], []
+            for _lbl_c in sel_indics_custom:
+                _col_c = find_column_in_df(df, _lbl_c)
+                if not _col_c:
+                    continue
+                _val_c = clean_numeric_value(row.get(_col_c))
+                if _val_c is None:
+                    continue
+                _, _pct_c = calculate_percentile(df, _col_c, _val_c)
+                _axes_c.append(_lbl_c)
+                _vals_c.append(_pct_c)
+                _cols_c.append(_col_c)
+
+            if len(_axes_c) < 3:
+                st.info("Pas assez de données renseignées pour ce joueur sur ces indicateurs.")
+            else:
+                _df_pro_c = pd.DataFrame()
+                if sel_equipe != "PRO" and poste_groupe_norme and "Equipe" in df_toutes_equipes.columns:
+                    _col_pos_pro_c = find_column_in_df(df_toutes_equipes, "Position") or find_column_in_df(df_toutes_equipes, "Poste")
+                    if _col_pos_pro_c:
+                        _df_pro_c = df_toutes_equipes[df_toutes_equipes["Equipe"].astype(str) == "PRO"].copy()
+                        _df_pro_c["Poste_Groupe"] = _df_pro_c[_col_pos_pro_c].apply(get_poste_large)
+                        _df_pro_c = _df_pro_c[_df_pro_c["Poste_Groupe"] == poste_groupe_norme]
+
+                _series_c = [{
+                    "name": p_sel,
+                    "values": _vals_c,
+                    "color": "#423D3D",
+                    "fill_opacity": 0.35,
+                    "width": 2,
+                }]
+
+                if not _df_pro_c.empty:
+                    _vals_pro_c = []
+                    for _col_c in _cols_c:
+                        _pro_pcts_c = []
+                        if _col_c in _df_pro_c.columns:
+                            for _raw_c in _df_pro_c[_col_c]:
+                                _v_c = clean_numeric_value(_raw_c)
+                                if _v_c is None:
+                                    continue
+                                try:
+                                    _, _pp_c = calculate_percentile(df, _col_c, _v_c)
+                                    _pro_pcts_c.append(_pp_c)
+                                except Exception:
+                                    pass
+                        _vals_pro_c.append(round(sum(_pro_pcts_c) / len(_pro_pcts_c)) if _pro_pcts_c else 0)
+                    _series_c.append({
+                        "name": f"PRO — {poste_groupe_norme.title()}",
+                        "values": _vals_pro_c,
+                        "color": SDR_RED,
+                        "width": 2,
+                        "dash": True,
+                        "fill": False,
+                    })
+                elif poste_groupe_norme and sel_equipe != "PRO":
+                    st.caption("ℹ️ Pas de joueurs PRO au même poste pour tracer la comparaison.")
+
+                fig_custom_radar = build_radar(_axes_c, _series_c, height=420)
+                st.plotly_chart(fig_custom_radar, width='stretch', config={'displayModeBar': False})
     with tab_indiv:
         _render_tab_indiv()
 
