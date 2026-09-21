@@ -1777,23 +1777,40 @@ def show_profiling_page(df_main=None):
             )
 
         radar_values_pro = []
+        radar_hover_texts_pro = []
         if show_pro_overlay_indiv:
             for item in radar_config:
                 pro_pcts = []
+                pro_raw_vals = []
+                unit_pro = ""
                 for col_key in item['cols']:
                     col_name = COL_MAPPING.get(col_key, col_key)
+                    unit_pro = UNITS.get(col_key, "")
                     if col_name not in df_pro_indiv.columns:
                         continue
                     for raw_val in df_pro_indiv[col_name]:
                         v = clean_numeric_value(raw_val)
                         if v is None:
                             continue
+                        pro_raw_vals.append(v)
                         try:
                             _, pp = calculate_percentile(df, col_name, v)
                             pro_pcts.append(pp)
                         except Exception:
                             pass
                 radar_values_pro.append(round(sum(pro_pcts) / len(pro_pcts)) if pro_pcts else 0)
+
+                if pro_raw_vals:
+                    moy_pro = sum(pro_raw_vals) / len(pro_raw_vals)
+                    moy_str = f"{int(moy_pro)} {unit_pro}" if moy_pro > 100 else f"{moy_pro:.2f} {unit_pro}"
+                else:
+                    moy_str = "-"
+                radar_hover_texts_pro.append(
+                    f"<b>PRO — {poste_groupe_norme.title()}</b><br><br>"
+                    f"{item['label']}<br>"
+                    f"Moyenne PRO : <b>{moy_str}</b><br>"
+                    f"(n={len(pro_raw_vals)} joueur(s))"
+                )
 
         # 3. Affichage
         c_radar, c_table = st.columns([3, 2])
@@ -1856,6 +1873,7 @@ def show_profiling_page(df_main=None):
                         "width": 2,
                         "dash": True,
                         "fill": False,
+                        "hovertext": radar_hover_texts_pro,
                     })
                 fig_main_radar = build_radar(
                     radar_labels,
@@ -3244,7 +3262,7 @@ def show_profiling_page(df_main=None):
         if len(sel_indics_custom) < 3:
             st.info("Sélectionne au moins 3 indicateurs pour afficher le radar.")
         else:
-            _axes_c, _vals_c, _cols_c = [], [], []
+            _axes_c, _vals_c, _cols_c, _hover_c = [], [], [], []
             for _lbl_c in sel_indics_custom:
                 _col_c = find_column_in_df(df, _lbl_c)
                 if not _col_c:
@@ -3256,6 +3274,11 @@ def show_profiling_page(df_main=None):
                 _axes_c.append(_lbl_c)
                 _vals_c.append(_pct_c)
                 _cols_c.append(_col_c)
+                _unit_c = UNITS.get(_lbl_c, "")
+                _val_c_str = f"{int(_val_c)} {_unit_c}" if _val_c > 100 else f"{_val_c:.2f} {_unit_c}"
+                _hover_c.append(
+                    f"<b>{p_sel}</b><br><br>{_lbl_c}<br>Valeur : <b>{_val_c_str}</b><br>Classement : <b>{format_pct_display(round(_pct_c))}</b>"
+                )
 
             if len(_axes_c) < 3:
                 st.info("Pas assez de données renseignées pour ce joueur sur ces indicateurs.")
@@ -3274,23 +3297,35 @@ def show_profiling_page(df_main=None):
                     "color": "#423D3D",
                     "fill_opacity": 0.35,
                     "width": 2,
+                    "hovertext": _hover_c,
                 }]
 
                 if not _df_pro_c.empty:
-                    _vals_pro_c = []
-                    for _col_c in _cols_c:
-                        _pro_pcts_c = []
+                    _vals_pro_c, _hover_pro_c = [], []
+                    for _lbl_c, _col_c in zip(_axes_c, _cols_c):
+                        _pro_pcts_c, _pro_raw_c = [], []
+                        _unit_c = UNITS.get(_lbl_c, "")
                         if _col_c in _df_pro_c.columns:
                             for _raw_c in _df_pro_c[_col_c]:
                                 _v_c = clean_numeric_value(_raw_c)
                                 if _v_c is None:
                                     continue
+                                _pro_raw_c.append(_v_c)
                                 try:
                                     _, _pp_c = calculate_percentile(df, _col_c, _v_c)
                                     _pro_pcts_c.append(_pp_c)
                                 except Exception:
                                     pass
                         _vals_pro_c.append(round(sum(_pro_pcts_c) / len(_pro_pcts_c)) if _pro_pcts_c else 0)
+                        if _pro_raw_c:
+                            _moy_pro_c = sum(_pro_raw_c) / len(_pro_raw_c)
+                            _moy_str_c = f"{int(_moy_pro_c)} {_unit_c}" if _moy_pro_c > 100 else f"{_moy_pro_c:.2f} {_unit_c}"
+                        else:
+                            _moy_str_c = "-"
+                        _hover_pro_c.append(
+                            f"<b>PRO — {poste_groupe_norme.title()}</b><br><br>{_lbl_c}<br>"
+                            f"Moyenne PRO : <b>{_moy_str_c}</b><br>(n={len(_pro_raw_c)} joueur(s))"
+                        )
                     _series_c.append({
                         "name": f"PRO — {poste_groupe_norme.title()}",
                         "values": _vals_pro_c,
@@ -3298,6 +3333,7 @@ def show_profiling_page(df_main=None):
                         "width": 2,
                         "dash": True,
                         "fill": False,
+                        "hovertext": _hover_pro_c,
                     })
                 elif poste_groupe_norme and sel_equipe != "PRO":
                     st.caption("ℹ️ Pas de joueurs PRO au même poste pour tracer la comparaison.")
